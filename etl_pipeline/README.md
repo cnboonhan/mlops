@@ -23,6 +23,13 @@ kubectl proxy --address 0.0.0.0 --disable-filter=true
 ```
 
 ```sh
+# Optionally install airflow
+python3 -m venv venv
+source venv/bin/activate
+pip3 install apache-airflow
+```
+
+```sh
 # Install Helm Chart for Airflow
 helm repo add apache-airflow https://airflow.apache.org
 helm upgrade --install airflow apache-airflow/airflow --namespace airflow --create-namespace

@@ -17,7 +17,7 @@ source <(helm completion bash)
 
 minikube start
 minikube addons enable ingress
-minikube dashboard
+minikube dashboard --port=9000
 # May need this if exposing outside of localhost 
 kubectl proxy --address 0.0.0.0 --disable-filter=true
 ```
@@ -35,30 +35,22 @@ helm repo add apache-airflow https://airflow.apache.org
 helm upgrade --install airflow apache-airflow/airflow --namespace airflow --create-namespace
 helm show all apache-airflow/airflow
 
+# Install Helm Chart for Minio Operator and Tenant
+helm repo add minio-operator https://operator.min.io
+helm install --namespace minio-operator --create-namespace operator minio-operator/operator
+helm install --namespace minio-tenant --create-namespace minio minio-operator/tenant
+
+# Install Helm Chart for Minio 
+
 # Set up Ingress
-cat <<EOF | kubectl apply -f -
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: airflow-ingress
-  namespace: airflow
-spec:
-  rules:
-  - host: airflow.local
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: airflow-webserver
-            port:
-              number: 8080
-EOF
+kubectl apply -f airflow-ingress.yaml
+kubectl apply -f minio-ingress.yaml
 
 # Set up /etc/hosts
 AIRFLOW_ETC_HOSTS="$(minikube ip) airflow.local"
+MINIO_ETC_HOSTS="$(minikube ip) minio.local"
 grep -qxF "$AIRFLOW_ETC_HOSTS" /etc/hosts || echo "$AIRFLOW_ETC_HOSTS" | tee -a /etc/hosts
+grep -qxF "$MINIO_ETC_HOSTS" /etc/hosts || echo "$MINIO_ETC_HOSTS" | tee -a /etc/hosts
 ```
 
 ## Configuration

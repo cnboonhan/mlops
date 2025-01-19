@@ -20,3 +20,13 @@ minikube dashboard --port=9000
 # Build Deploy image
 docker build . -t app-deploy -f Dockerfile
 ```
+
+```sh
+# Install helm chart
+helm install --create-namespace -f ./app-deploy/values.yaml  app-deploy ./app-deploy
+helm upgrade app-deploy ./app-deploy -f ./app-deploy/values.yaml
+ETC_HOSTS="$(minikube ip) app-deploy.local"
+grep -qxF "$ETC_HOSTS" /etc/hosts || echo "$ETC_HOSTS" | tee -a /etc/hosts
+
+curl -X POST -F "file=@./demo_image.jpg" https://app-deploy.local/upload --output result.jpg -k
+```

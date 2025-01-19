@@ -4,7 +4,7 @@ from airflow.operators.bash import BashOperator
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 
 with DAG(
-    dag_id="image_etl", start_date=datetime(2024, 8, 8), schedule_interval=None
+    dag_id="image_etl", start_date=datetime(2024, 1, 19), schedule_interval=None
 ) as dag:
     # Tasks are represented as operators
     pull_raw_images = BashOperator(

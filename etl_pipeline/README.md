@@ -12,8 +12,8 @@ command -v minikube
 command -v kubectl 
 command -v helm 
 
-source /etc/bash
 source <(kubectl completion bash)
+source <(helm completion bash)
 
 minikube start
 minikube addons enable ingress
@@ -26,6 +26,7 @@ kubectl proxy --address 0.0.0.0 --disable-filter=true
 # Install Helm Chart for Airflow
 helm repo add apache-airflow https://airflow.apache.org
 helm upgrade --install airflow apache-airflow/airflow --namespace airflow --create-namespace
+helm show all apache-airflow/airflow
 
 # Set up Ingress
 cat <<EOF | kubectl apply -f -
@@ -53,3 +54,9 @@ AIRFLOW_ETC_HOSTS="$(minikube ip) airflow.local"
 grep -qxF "$AIRFLOW_ETC_HOSTS" /etc/hosts || echo "$AIRFLOW_ETC_HOSTS" | tee -a /etc/hosts
 ```
 
+## Configuration
+```sh
+# Configure to sync to git
+helm upgrade --install airflow apache-airflow/airflow -n airflow -f values.yaml 
+helm get values airflow
+```

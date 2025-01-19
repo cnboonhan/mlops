@@ -1,0 +1,12 @@
+config:
+  webserver:
+    expose_config: 'True'
+
+  gitSync:
+    enabled: true
+    repo: https://github.com/cnboonhan/mlops
+    branch: main
+    rev: HEAD
+    depth: 1
+    wait: 5
+    subpath: "etl_pipeline/dags"

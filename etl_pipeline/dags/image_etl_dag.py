@@ -3,18 +3,6 @@ from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 
-hook = S3Hook("minio_s3")
-hook.download_file(key="test", bucket_name="images")
-
-
-def download_from_s3(key: str, bucket_name: str, local_path: str) -> str:
-    hook = S3Hook("s3_conn")
-    file_name = hook.download_file(
-        key=key, bucket_name=bucket_name, local_path=local_path
-    )
-    return file_name
-
-
 with DAG(
     dag_id="image_etl", start_date=datetime(2024, 8, 8), schedule="0 0 * * *"
 ) as dag:
